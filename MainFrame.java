@@ -44,6 +44,7 @@ public class MainFrame extends JFrame implements ActionListener
                 int keyCode = e.getKeyCode();
                 if (keyCode == 32) 
                 {
+                    // able to jump only if on ground
                     if (ball.on_ground)
                     {
                         ball.on_jump = true;
@@ -58,10 +59,13 @@ public class MainFrame extends JFrame implements ActionListener
         this.setSize(400, 400);
         this.setLocationRelativeTo(null);
 
-        obstacle o1 = new obstacle(300,690,20);
+        //add obstacle
+        obstacle o1 = new obstacle(375,672,28);
         ball.list_obstacle.add(o1);
-        obstacle o2 = new obstacle(500,670,40);
+        obstacle o2 = new obstacle(600,680,20);
         ball.list_obstacle.add(o2);
+        obstacle o3 = new obstacle(630,680,20);
+        ball.list_obstacle.add(o3);
 
         panel.add(ball, BorderLayout.CENTER);
         Thread thread = new Thread(ball);
