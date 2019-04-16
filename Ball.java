@@ -27,14 +27,7 @@ public class Ball extends JPanel implements Runnable
         // print ground
         g.setColor(Color.BLACK);
         g.drawLine(0,700,1500,700);
-
-        // print all obstacles
-        for (int i = 0; i < list_obstacle.size(); i++)
-        {
-            g.setColor(Color.RED);
-            obstacle o = list_obstacle.get(i);
-            g.fillRect(o.posx,o.posy,o.width,o.width);
-        }
+        
 
         //print DEAD if you are
         if (!alive)
@@ -63,15 +56,33 @@ public class Ball extends JPanel implements Runnable
 
         // erase last position
         g.setColor(Color.white);
-        g.fillRect(prevx, prevy, width, width);
+        g.fillRect(prevx,prevy,width,width);
+        for (int i = 0; i < list_obstacle.size(); i++)
+        {
+            obstacle o = list_obstacle.get(i);
+            g.fillRect(o.prevx, o.prevy, o.width, o.width);
+        }
 
         // print new position
         g.setColor(Color.BLUE);
         g.fillRect(x, y, width, width);
+        for (int i = 0; i < list_obstacle.size(); i++)
+        {
+            g.setColor(Color.RED);
+            obstacle o = list_obstacle.get(i);
+            g.fillRect(o.posx, o.posy, o.width, o.width);
+        }
 
         // save position
         prevx = x;
         prevy = y;		
+        for (int i = 0; i < list_obstacle.size(); i++)
+        {
+            obstacle o = list_obstacle.get(i);
+            o.prevx = o.posx;
+            o.prevy = o.posy;
+        }
+
     }
 
 
@@ -82,9 +93,6 @@ public class Ball extends JPanel implements Runnable
         {
             if (alive)
             {
-                //go forward
-                x += 1*speed;
-
                 // if ball is jumping, go upward
                 if (on_jump)
                     y -= 2*speed;
@@ -108,6 +116,7 @@ public class Ball extends JPanel implements Runnable
                                 (o.posx + o.width)) < o.width && Math.abs((y 
                                         + width) - (o.posy + o.width)) < o.width)
                         alive = false;
+                    o.posx -= 1;
                 }
 
                 // call paintComponent to print everything
