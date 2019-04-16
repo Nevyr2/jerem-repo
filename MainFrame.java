@@ -21,8 +21,7 @@ public class MainFrame extends JFrame implements ActionListener
         panel.setLayout(new BorderLayout());
         panelsud.setLayout(new BorderLayout());
         panel.add(panelsud, BorderLayout.SOUTH);
-        panel.setBackground(Color.white);
-        panelsud.setBackground(Color.white);
+        this.setBackground(Color.WHITE);
         this.addKeyListener(new KeyListener() {
 
             @Override
@@ -44,13 +43,26 @@ public class MainFrame extends JFrame implements ActionListener
                 int keyCode = e.getKeyCode();
                 if (keyCode == 32) 
                 {
+                    //launch again
+                    if (!ball.alive)
+                    {
+                        ball.x = 50;
+                        ball.y = 650;
+                        ball.alive = true;
+                        Thread thread = new Thread(ball);
+                        thread.start();
+                        panel.updateUI();
+                    }
+
                     // able to jump only if on ground
-                    if (ball.on_ground)
+                    else if (ball.on_ground)
                     {
                         ball.on_jump = true;
                         ball.on_ground = false;
                         panel.updateUI();
+
                     }
+
                 }
             }
         });

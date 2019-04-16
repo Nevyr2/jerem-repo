@@ -8,15 +8,17 @@ import javax.swing.*;
 
 public class Ball extends JPanel implements Runnable 
 {
-    private int x = 50;
-    private int y = 650;
+    public int x = 50;
+    public int y = 650;
     private int width = 50;
     private int prevx = x;
     private int prevy = y;
     boolean on_jump = false;
     boolean on_ground = true;
     boolean alive = true;
-    float speed = 3/2;
+    boolean quit = false;
+    float speed = 1;
+    
     ArrayList<obstacle> list_obstacle = new ArrayList<obstacle>();
 
     @Override
@@ -40,7 +42,25 @@ public class Ball extends JPanel implements Runnable
             g.setColor(Color.RED);
             g.setFont(new Font("Arial Black", Font.BOLD, 50));
             g.drawString("YOU'RE DEAD",300,400);
+
+            g.setColor(Color.GREEN);
+            g.setFont(new Font("Arial Black", Font.BOLD, 20));
+            g.drawString("Press Space to Try Again",50,750);
+
         }
+
+        if (alive)
+        {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial Black", Font.BOLD, 50));
+            g.drawString("YOU'RE DEAD",300,400);
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial Black", Font.BOLD, 20));
+            g.drawString("Press Space to Try Again",50,750);
+
+        }
+
         // erase last position
         g.setColor(Color.white);
         g.fillRect(prevx, prevy, width, width);
@@ -58,45 +78,50 @@ public class Ball extends JPanel implements Runnable
     public void run() 
     {
         System.out.println("D�but de la m�thode run");
-        while (alive) 
+        while (!quit) 
         {
-            //go forward
-            x += 1*speed;
-
-            // if ball is jumping, go upward
-            if (on_jump)
-                y -= 2*speed;
-
-            // if ball finish jump, have to go downward until touch ground
-            if (!on_ground && !on_jump)
-                y += 1*speed;
-
-            // touch ground
-            if (y == 650)
-                on_ground = true; 
-            // finish jump
-            else if (y < 550)
-                on_jump = false;
-
-            //check if ball touch one of the obstacle
-            for (int i = 0; i < list_obstacle.size(); i++)
+            if (alive)
             {
-                obstacle o = list_obstacle.get(i);
-                if (Math.abs((x + width) - (o.posx + o.width)) < o.width && Math.abs((y + width) - (o.posy + o.width)) < o.width)
-                    alive = false;
-            }
-            
-            // call paintComponent to print everything
-            this.repaint();
+                //go forward
+                x += 1*speed;
 
-            try 
-            {
-                // sleep allows smoothly move
-                Thread.sleep(10);
-            } 
-            catch (InterruptedException e) {
-                e.printStackTrace();
+                // if ball is jumping, go upward
+                if (on_jump)
+                    y -= 2*speed;
 
+                // if ball finish jump, have to go downward until touch ground
+                if (!on_ground && !on_jump)
+                    y += 1*speed;
+
+                // touch ground
+                if (y == 650)
+                    on_ground = true; 
+                // finish jump
+                else if (y < 550)
+                    on_jump = false;
+
+                //check if ball touch one of the obstacle
+                for (int i = 0; i < list_obstacle.size(); i++)
+                {
+                    obstacle o = list_obstacle.get(i);
+                    if (Math.abs((x + width) - 
+                                (o.posx + o.width)) < o.width && Math.abs((y 
+                                        + width) - (o.posy + o.width)) < o.width)
+                        alive = false;
+                }
+
+                // call paintComponent to print everything
+                this.repaint();
+
+                try 
+                {
+                    // sleep allows smoothly move
+                    Thread.sleep(5);
+                } 
+                catch (InterruptedException e) 
+                {
+                    e.printStackTrace();
+                }
             }
 
         }
