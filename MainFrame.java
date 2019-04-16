@@ -48,6 +48,13 @@ public class MainFrame extends JFrame implements ActionListener
                     {
                         ball.x = 50;
                         ball.y = 650;
+
+                        for (int i = 0; i < ball.list_obstacle.size(); i++)
+                        {
+                            obstacle o = ball.list_obstacle.get(i);
+                            o.posx = o.initx;
+                            o.posy = o.inity;
+                        }
                         ball.alive = true;
                         Thread thread = new Thread(ball);
                         thread.start();
