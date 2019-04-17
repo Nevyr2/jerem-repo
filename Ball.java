@@ -22,6 +22,8 @@ public class Ball extends JPanel implements Runnable
     int prev_score = 0;
     int lvl = 1;
     int prev_lvl;
+    int next_lvl = 5;
+    int prev_next_lvl = 5;
     ArrayList<obstacle> list_obstacle = new ArrayList<obstacle>();
 
     @Override
@@ -31,24 +33,39 @@ public class Ball extends JPanel implements Runnable
         g.setColor(Color.BLACK);
         g.drawLine(0,700,1500,700);
 
+        g.setColor(Color.BLACK);
+        g.drawLine(0,50,1500,50);
+        g.setColor(Color.BLACK);
+        g.drawLine(0,165,1500,165);
+        
         //print Score
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial Black", Font.BOLD, 50));
-        g.drawString("SCORE: " + prev_score,600,100);
+        g.drawString("SCORE: " + prev_score,200,125);
 
         g.setColor(Color.BLUE);
         g.setFont(new Font("Arial Black", Font.BOLD, 50));
-        g.drawString("SCORE: " + score,600,100);
+        g.drawString("SCORE: " + score,200,125);
+
+        //print next_lvl
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial Black", Font.BOLD, 50));
+        g.drawString("Next_lvl: " + (prev_score + prev_next_lvl),600,150);
+
+        g.setColor(Color.GREEN);
+        g.setFont(new Font("Arial Black", Font.BOLD, 50));
+        g.drawString("Next_lvl: " + (score + next_lvl),600,150);
+        prev_next_lvl = next_lvl;
         prev_score = score;
 
         //print level
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial Black", Font.BOLD, 50));
-        g.drawString("LEVEL : " + prev_lvl,600,150);
+        g.drawString("LEVEL : " + prev_lvl,600,100);
 
         g.setColor(Color.GREEN);
         g.setFont(new Font("Arial Black", Font.BOLD, 50));
-        g.drawString("LEVEL : " + lvl,600,150);
+        g.drawString("LEVEL : " + lvl,600,100);
         prev_lvl = lvl;
 
         //print DEAD if you are
@@ -112,12 +129,13 @@ public class Ball extends JPanel implements Runnable
         {
             score = 0;
             lvl = 1;
+            next_lvl = 5;
         }
 
-        if (score > 5)
+        if (next_lvl == 0)
         {
             lvl += 1;
-            score = 0;
+            next_lvl = 5;
         }
     }
 
@@ -164,12 +182,13 @@ public class Ball extends JPanel implements Runnable
             {
                 list_obstacle.remove(i);
                 score += 1;
+                next_lvl -= 1;
             }
         }
         while (list_obstacle.size() < (5 + lvl))
         {
             int width = (int)(Math.random() * 20) + 10;
-            obstacle new_o = new obstacle(500 + (int)(Math.random() * 3000),700 - width - ((int)(Math.random() * 2) * 60), width);
+            obstacle new_o = new obstacle(800 + (int)(Math.random() * 3000),700 - width - ((int)(Math.random() * 2) * 60), width);
             list_obstacle.add(new_o);
         }
 
