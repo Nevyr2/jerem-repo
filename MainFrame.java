@@ -47,7 +47,7 @@ public class MainFrame extends JFrame implements ActionListener
                     if (!ball.alive)
                     {
                         ball.x = 50;
-                        ball.y = 650;
+                        ball.y = 648;
 
                         for (int i = 0; i < ball.list_obstacle.size(); i++)
                         {
@@ -77,14 +77,6 @@ public class MainFrame extends JFrame implements ActionListener
         this.setContentPane(panel);
         this.setSize(400, 400);
         this.setLocationRelativeTo(null);
-
-        //add obstacle
-        obstacle o1 = new obstacle(375,672,28);
-        ball.list_obstacle.add(o1);
-        obstacle o2 = new obstacle(600,680,20);
-        ball.list_obstacle.add(o2);
-        obstacle o3 = new obstacle(630,680,20);
-        ball.list_obstacle.add(o3);
 
         panel.add(ball, BorderLayout.CENTER);
         Thread thread = new Thread(ball);
