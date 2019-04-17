@@ -20,7 +20,8 @@ public class Ball extends JPanel implements Runnable
     float speed = 3/2;
     int score = 0;
     int prev_score = 0;
-
+    int lvl = 1;
+    int prev_lvl;
     ArrayList<obstacle> list_obstacle = new ArrayList<obstacle>();
 
     @Override
@@ -39,6 +40,17 @@ public class Ball extends JPanel implements Runnable
         g.setFont(new Font("Arial Black", Font.BOLD, 50));
         g.drawString("SCORE: " + score,600,100);
         prev_score = score;
+
+        //print level
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial Black", Font.BOLD, 50));
+        g.drawString("LEVEL : " + prev_lvl,600,150);
+
+        g.setColor(Color.GREEN);
+        g.setFont(new Font("Arial Black", Font.BOLD, 50));
+        g.drawString("LEVEL : " + lvl,600,150);
+        prev_lvl = lvl;
+
         //print DEAD if you are
         if (!alive)
         {
@@ -49,9 +61,9 @@ public class Ball extends JPanel implements Runnable
             g.setColor(Color.GREEN);
             g.setFont(new Font("Arial Black", Font.BOLD, 20));
             g.drawString("Press Space to Try Again",50,750);
-
         }
 
+        prev_score = score;
         if (alive)
         {
             g.setColor(Color.WHITE);
@@ -61,7 +73,6 @@ public class Ball extends JPanel implements Runnable
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial Black", Font.BOLD, 20));
             g.drawString("Press Space to Try Again",50,750);
-
         }
 
         // erase last position
@@ -95,6 +106,20 @@ public class Ball extends JPanel implements Runnable
 
     }
 
+    public void update_score_lvl()
+    {
+        if (!alive)
+        {
+            score = 0;
+            lvl = 1;
+        }
+
+        if (score > 5)
+        {
+            lvl += 1;
+            score = 0;
+        }
+    }
 
     public void move_player()
     {
@@ -104,7 +129,7 @@ public class Ball extends JPanel implements Runnable
 
         // if ball finish jump, have to go downward until touch ground
         if (!on_ground && !on_jump)
-            y += 1*speed;
+            y += 2*speed;
 
         // touch ground
         if (y == 650)
@@ -124,7 +149,9 @@ public class Ball extends JPanel implements Runnable
             if (Math.abs((x + width) - 
                         (o.posx + o.width)) < o.width && Math.abs((y 
                                 + width) - (o.posy + o.width)) < o.width)
+            {
                 alive = false;
+            }
             o.posx -= 1;
         }
     }
@@ -139,7 +166,7 @@ public class Ball extends JPanel implements Runnable
                 score += 1;
             }
         }
-        while (list_obstacle.size() < 8)
+        while (list_obstacle.size() < (5 + lvl))
         {
             int width = (int)(Math.random() * 20) + 10;
             obstacle new_o = new obstacle(500 + (int)(Math.random() * 3000),700 - width - ((int)(Math.random() * 2) * 60), width);
@@ -160,13 +187,15 @@ public class Ball extends JPanel implements Runnable
 
                 maj_obstacle();
 
+                update_score_lvl();
+
                 // call paintComponent to print everything
                 this.repaint();
 
                 try 
                 {
                     // sleep allows smoothly move
-                    Thread.sleep(5);
+                    Thread.sleep(8);
                 } 
                 catch (InterruptedException e) 
                 {
