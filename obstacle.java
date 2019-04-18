@@ -11,4 +11,22 @@ public class obstacle
         this.posy = posy;
         this.width = width;
     }
+
+    public void move(float speed)
+    {
+        this.posx -= 1*speed;
+    }
+
+    public void touch_obstacle(Ball ball)
+    {
+        if ( Math.abs(ball.x + ball.width - posx - width) < ball.width  && ball.y == (posy + width))
+            ball.alive = false;
+
+        if ( (ball.x + ball.width) == posx 
+                && (ball.y + ball.width) > posy
+                &&  ball.y < (posy + width))
+            ball.alive = false;
+    }
+
 }
+

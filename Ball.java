@@ -10,7 +10,7 @@ public class Ball extends JPanel implements Runnable
 {
     public int x = 50;
     public int y = 650;
-    private int width = 50;
+    public int width = 50;
     boolean on_jump = false;
     boolean on_ground = true;
     int ground =  650;
@@ -35,7 +35,7 @@ public class Ball extends JPanel implements Runnable
         super.paintComponent(g);
         
         //clear everything
-        g.clearRect(0,0, 1000, 1000);
+        g.clearRect(0,0, 2000, 2000);
     
         // print ground and line
         g.setColor(Color.BLACK);
@@ -136,7 +136,7 @@ public class Ball extends JPanel implements Runnable
         {
             obstacle o = list_obstacle.get(i);
 
-            if ( (y + width) == (o.posy) && Math.abs(x  - o.posx) < width && !on_ground && !on_jump)
+            if ( (y + width) == (o.posy) && Math.abs(x + width - o.posx) < width && !on_ground && !on_jump)
             {
                 on_ground = true;
                 on_jump = false;
@@ -144,14 +144,11 @@ public class Ball extends JPanel implements Runnable
                 on_obstacle = i;
             }
             
-
-            if (Math.abs((x + width) - 
-                        (o.posx + o.width)) < o.width && Math.abs((y 
-                                + width) - (o.posy + o.width)) < o.width)
-            {
-                alive = true;
-            }
-            o.posx -= 1*speed;
+            //check if alive
+            o.touch_obstacle(this);
+                        
+            //move obstacle
+            o.move(speed);
         }
     }
     public void maj_obstacle()
@@ -183,6 +180,7 @@ public class Ball extends JPanel implements Runnable
                     list_obstacle.remove(j);
             }
         }
+
         while (list_obstacle.size() < (5 + lvl))
         {
             int width = (int)(Math.random() * 20) + 10;
