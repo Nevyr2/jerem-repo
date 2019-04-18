@@ -9,7 +9,7 @@ public class MainFrame extends JFrame implements ActionListener
 {
     private JPanel panel = new JPanel();
     private JPanel panelsud = new JPanel();
-    Ball ball = new Ball();
+    Ball ball = new Ball(panel);
 
     public MainFrame() 
     {
@@ -47,16 +47,8 @@ public class MainFrame extends JFrame implements ActionListener
                     {
                         ball.x = 50;
                         ball.y = 648;
-
-                        for (int i = 0; i < ball.list_obstacle.size(); i++)
-                        {
-                            obstacle o = ball.list_obstacle.get(i);
-                            o.posx = o.initx;
-                            o.posy = o.inity;
-                        }
+                        ball.list_obstacle.clear();
                         ball.alive = true;
-                        Thread thread = new Thread(ball);
-                        thread.start();
                         panel.updateUI();
                     }
 

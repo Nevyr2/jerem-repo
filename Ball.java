@@ -11,64 +11,52 @@ public class Ball extends JPanel implements Runnable
     public int x = 50;
     public int y = 650;
     private int width = 50;
-    private int prevx = x;
-    private int prevy = y;
     boolean on_jump = false;
     boolean on_ground = true;
+    int ground =  650;
     boolean alive = true;
     boolean quit = false;
-    int speed = 1;
+    float speed = 1;
     int score = 0;
-    int prev_score = 0;
     int lvl = 1;
-    int prev_lvl;
     int next_lvl = 5;
-    int prev_next_lvl = 5;
-    int sleeper = 3;
+    int on_obstacle = -1;
     ArrayList<obstacle> list_obstacle = new ArrayList<obstacle>();
+    JPanel panel = new JPanel();
 
+    public Ball(JPanel panel)
+    {
+        this.panel = panel;
+    }
     @Override
     protected void paintComponent(Graphics g) 
     {
+
         super.paintComponent(g);
-        // print ground
+        
+        //clear everything
+        g.clearRect(0,0, 1000, 1000);
+    
+        // print ground and line
         g.setColor(Color.BLACK);
         g.drawLine(0,700,1500,700);
-
-        g.setColor(Color.BLACK);
         g.drawLine(0,50,1500,50);
-        g.setColor(Color.BLACK);
         g.drawLine(0,165,1500,165);
         
         //print Score
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial Black", Font.BOLD, 50));
-        g.drawString("SCORE: " + prev_score,200,125);
-
         g.setColor(Color.BLUE);
         g.setFont(new Font("Arial Black", Font.BOLD, 50));
         g.drawString("SCORE: " + score,200,125);
 
         //print next_lvl
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial Black", Font.BOLD, 50));
-        g.drawString("Next_lvl: " + (prev_score + prev_next_lvl),600,150);
-
         g.setColor(Color.GREEN);
         g.setFont(new Font("Arial Black", Font.BOLD, 50));
         g.drawString("Next_lvl: " + (score + next_lvl),600,150);
-        prev_next_lvl = next_lvl;
-        prev_score = score;
 
         //print level
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial Black", Font.BOLD, 50));
-        g.drawString("LEVEL : " + prev_lvl,600,100);
-
         g.setColor(Color.GREEN);
         g.setFont(new Font("Arial Black", Font.BOLD, 50));
         g.drawString("LEVEL : " + lvl,600,100);
-        prev_lvl = lvl;
 
         //print DEAD if you are
         if (!alive)
@@ -81,27 +69,7 @@ public class Ball extends JPanel implements Runnable
             g.setFont(new Font("Arial Black", Font.BOLD, 20));
             g.drawString("Press Space to Try Again",50,750);
         }
-
-        prev_score = score;
-        if (alive)
-        {
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial Black", Font.BOLD, 50));
-            g.drawString("YOU'RE DEAD",300,400);
-
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial Black", Font.BOLD, 20));
-            g.drawString("Press Space to Try Again",50,750);
-        }
-
-        // erase last position
-        g.setColor(Color.white);
-        g.fillRect(prevx,prevy,width,width);
-        for (int i = 0; i < list_obstacle.size(); i++)
-        {
-            obstacle o = list_obstacle.get(i);
-            g.fillRect(o.prevx, o.prevy, o.width, o.width);
-        }
+        
 
         // print new position
         g.setColor(Color.BLUE);
@@ -112,17 +80,6 @@ public class Ball extends JPanel implements Runnable
             obstacle o = list_obstacle.get(i);
             g.fillRect(o.posx, o.posy, o.width, o.width);
         }
-
-        // save position
-        prevx = x;
-        prevy = y;		
-        for (int i = 0; i < list_obstacle.size(); i++)
-        {
-            obstacle o = list_obstacle.get(i);
-            o.prevx = o.posx;
-            o.prevy = o.posy;
-        }
-
     }
 
     public void update_score_lvl()
@@ -138,25 +95,36 @@ public class Ball extends JPanel implements Runnable
         {
             lvl += 1;
             next_lvl = 5;
-            speed += 1;
         }
     }
 
     public void move_player()
     {
+        //on obstacle
+        if (on_obstacle != -1)
+        {
+            obstacle o = list_obstacle.get(on_obstacle);
+            if ( (o.posx + width) < x)
+            {
+                on_ground = false;
+                ground += o.width;
+                on_obstacle = -1;
+            }
+        }
+
         // if ball is jumping, go upward
         if (on_jump)
-            y -= 2;
+            y -= 2*speed;
 
         // if ball finish jump, have to go downward until touch ground
         if (!on_ground && !on_jump)
-            y += 2;
+            y += 2*speed;
 
         // touch ground
-        if (y == 650)
+        if (y == ground)
             on_ground = true; 
         // finish jump
-        else if (y < 515)
+        else if (y < ground - 150)
             on_jump = false;
 
     }
@@ -167,14 +135,23 @@ public class Ball extends JPanel implements Runnable
         for (int i = 0; i < list_obstacle.size(); i++)
         {
             obstacle o = list_obstacle.get(i);
+
+            if ( (y + width) == (o.posy) && Math.abs(x  - o.posx) < width && !on_ground && !on_jump)
+            {
+                on_ground = true;
+                on_jump = false;
+                ground -= o.width;
+                on_obstacle = i;
+            }
+            
+
             if (Math.abs((x + width) - 
                         (o.posx + o.width)) < o.width && Math.abs((y 
                                 + width) - (o.posy + o.width)) < o.width)
             {
-                alive = false;
-                sleeper += 3;
+                alive = true;
             }
-            o.posx -= 1;
+            o.posx -= 1*speed;
         }
     }
     public void maj_obstacle()
@@ -200,14 +177,17 @@ public class Ball extends JPanel implements Runnable
                 if (i == j)
                     continue;
 
-                if (Math.abs(o1.posx - o2.posx) > 30 && Math.abs(o1.posx - o2.posx) < 50 && o1.posy == o2.posy)
+                if (Math.abs(o1.posx - o2.posx) > 20 
+                        && Math.abs(o1.posx - o2.posx) < 60 
+                        && o1.posy == o2.posy)
                     list_obstacle.remove(j);
             }
         }
         while (list_obstacle.size() < (5 + lvl))
         {
             int width = (int)(Math.random() * 20) + 10;
-            obstacle new_o = new obstacle(1000 + (int)(Math.random() * 3000),700 - width - ((int)(Math.random() * 2) * 60), width);
+            obstacle new_o = new obstacle(1000 + (int)(Math.random() * 3000),
+                    700 - width - ((int)(Math.random() * 2) * 60), width);
             list_obstacle.add(new_o);
         }
 
@@ -233,8 +213,8 @@ public class Ball extends JPanel implements Runnable
 
                 try 
                 {
-                    // sleep allows smoothly move
-                    Thread.sleep(sleeper - speed/4);
+                    // sleep
+                    Thread.sleep(3);
                 } 
                 catch (InterruptedException e) 
                 {
