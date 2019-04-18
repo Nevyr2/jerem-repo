@@ -3,7 +3,7 @@ import java.awt.Graphics;
 import java.awt.Font;
 import java.util.Random; 
 import java.util.ArrayList;
-
+import java.awt.Toolkit; 
 import javax.swing.*;
 
 public class Ball extends JPanel implements Runnable 
@@ -17,18 +17,20 @@ public class Ball extends JPanel implements Runnable
     boolean on_ground = true;
     boolean alive = true;
     boolean quit = false;
-    float speed = 3/2;
+    int speed = 1;
     int score = 0;
     int prev_score = 0;
     int lvl = 1;
     int prev_lvl;
     int next_lvl = 5;
     int prev_next_lvl = 5;
+    int sleeper = 3;
     ArrayList<obstacle> list_obstacle = new ArrayList<obstacle>();
 
     @Override
     protected void paintComponent(Graphics g) 
     {
+        super.paintComponent(g);
         // print ground
         g.setColor(Color.BLACK);
         g.drawLine(0,700,1500,700);
@@ -136,6 +138,7 @@ public class Ball extends JPanel implements Runnable
         {
             lvl += 1;
             next_lvl = 5;
+            speed += 1;
         }
     }
 
@@ -143,11 +146,11 @@ public class Ball extends JPanel implements Runnable
     {
         // if ball is jumping, go upward
         if (on_jump)
-            y -= 2*speed;
+            y -= 2;
 
         // if ball finish jump, have to go downward until touch ground
         if (!on_ground && !on_jump)
-            y += 2*speed;
+            y += 2;
 
         // touch ground
         if (y == 650)
@@ -169,6 +172,7 @@ public class Ball extends JPanel implements Runnable
                                 + width) - (o.posy + o.width)) < o.width)
             {
                 alive = false;
+                sleeper += 3;
             }
             o.posx -= 1;
         }
@@ -185,10 +189,25 @@ public class Ball extends JPanel implements Runnable
                 next_lvl -= 1;
             }
         }
+
+        for (int i = 0; i < list_obstacle.size(); i++)
+        {
+            obstacle o1 = list_obstacle.get(i);
+            for (int j = 0; j < list_obstacle.size(); j++)
+            {
+                obstacle o2 = list_obstacle.get(j);
+
+                if (i == j)
+                    continue;
+
+                if (Math.abs(o1.posx - o2.posx) > 30 && Math.abs(o1.posx - o2.posx) < 50 && o1.posy == o2.posy)
+                    list_obstacle.remove(j);
+            }
+        }
         while (list_obstacle.size() < (5 + lvl))
         {
             int width = (int)(Math.random() * 20) + 10;
-            obstacle new_o = new obstacle(800 + (int)(Math.random() * 3000),700 - width - ((int)(Math.random() * 2) * 60), width);
+            obstacle new_o = new obstacle(1000 + (int)(Math.random() * 3000),700 - width - ((int)(Math.random() * 2) * 60), width);
             list_obstacle.add(new_o);
         }
 
@@ -198,6 +217,7 @@ public class Ball extends JPanel implements Runnable
         System.out.println("D�but de la m�thode run");
         while (!quit) 
         {
+            Toolkit.getDefaultToolkit().sync();
             if (alive)
             {
                 move_player();
@@ -214,7 +234,7 @@ public class Ball extends JPanel implements Runnable
                 try 
                 {
                     // sleep allows smoothly move
-                    Thread.sleep(8);
+                    Thread.sleep(sleeper - speed/4);
                 } 
                 catch (InterruptedException e) 
                 {

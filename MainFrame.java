@@ -1,13 +1,11 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.*;
-
-public class MainFrame extends JFrame implements ActionListener 
+public class MainFrame extends JFrame implements ActionListener
 {
     private JPanel panel = new JPanel();
     private JPanel panelsud = new JPanel();
@@ -15,6 +13,7 @@ public class MainFrame extends JFrame implements ActionListener
 
     public MainFrame() 
     {
+
         this.setVisible(true);
         this.setTitle("Moving Balls");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,7 +84,7 @@ public class MainFrame extends JFrame implements ActionListener
 
     }
 
-    public void actionPerformed(ActionEvent arg0) 
+    public void actionPerformed(ActionEvent arg0)
     {
         panel.add(ball, BorderLayout.CENTER);
         Thread thread = new Thread(ball);
