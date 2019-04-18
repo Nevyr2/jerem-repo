@@ -19,7 +19,9 @@ public class obstacle
 
     public void touch_obstacle(Ball ball)
     {
-        if ( Math.abs(ball.x + ball.width - posx - width) < ball.width  && ball.y == (posy + width))
+        if ( ( (ball.x < posx && (ball.x + ball.width) > (posx + width))
+                    || (posx < ball.x && (posx + width) > (ball.x + ball.width)))
+                    && ball.y == (posy + width))
             ball.alive = false;
 
         if ( (ball.x + ball.width) == posx 

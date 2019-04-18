@@ -101,7 +101,7 @@ public class Ball extends JPanel implements Runnable
     public void move_player()
     {
         //on obstacle
-        if (on_obstacle != -1)
+        if (on_obstacle >= 0 && on_obstacle < list_obstacle.size())
         {
             obstacle o = list_obstacle.get(on_obstacle);
             if ( (o.posx + width) < x)
@@ -131,12 +131,17 @@ public class Ball extends JPanel implements Runnable
 
     public void move_obstacle_AND_check_dead()
     {
-        //check if ball touch one of the obstacle
+        //check if ball jump one of the obstacle
         for (int i = 0; i < list_obstacle.size(); i++)
         {
             obstacle o = list_obstacle.get(i);
 
-            if ( (y + width) == (o.posy) && Math.abs(x + width - o.posx) < width && !on_ground && !on_jump)
+            if ( (y + width) == (o.posy) 
+                            && (( x < o.posx 
+                            && (x + width) > (o.posx + o.width)) 
+                            || (o.posx < x 
+                            && (o.posx + o.width) > (x + width)))
+                    && !on_ground && !on_jump)
             {
                 on_ground = true;
                 on_jump = false;
@@ -153,6 +158,7 @@ public class Ball extends JPanel implements Runnable
     }
     public void maj_obstacle()
     {
+        //delete obstacle passed
         for (int i = 0; i < list_obstacle.size(); i++)
         {
             obstacle o = list_obstacle.get(i);
@@ -164,6 +170,7 @@ public class Ball extends JPanel implements Runnable
             }
         }
 
+        //delete obstacle when too close
         for (int i = 0; i < list_obstacle.size(); i++)
         {
             obstacle o1 = list_obstacle.get(i);
@@ -180,7 +187,7 @@ public class Ball extends JPanel implements Runnable
                     list_obstacle.remove(j);
             }
         }
-
+        //add obstacle
         while (list_obstacle.size() < (5 + lvl))
         {
             int width = (int)(Math.random() * 20) + 10;
