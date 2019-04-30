@@ -49,6 +49,7 @@ public class MainFrame extends JFrame implements ActionListener
                         ball.y = 648;
                         ball.list_obstacle.clear();
                         ball.alive = true;
+                        ball.ground = 650;
                         panel.updateUI();
                     }
 
@@ -58,7 +59,7 @@ public class MainFrame extends JFrame implements ActionListener
                         ball.on_jump = true;
                         ball.on_ground = false;
                         panel.updateUI();
-
+                        ball.jump_ground = ball.y;
                     }
 
                 }

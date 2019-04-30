@@ -14,13 +14,14 @@ public class Ball extends JPanel implements Runnable
     boolean on_jump = false;
     boolean on_ground = true;
     int ground =  650;
+    int jump_ground = 0;
     boolean alive = true;
     boolean quit = false;
     float speed = 1;
     int score = 0;
     int lvl = 1;
     int next_lvl = 5;
-    int on_obstacle = -1;
+    obstacle on_obstacle = null;
     ArrayList<obstacle> list_obstacle = new ArrayList<obstacle>();
     JPanel panel = new JPanel();
 
@@ -69,7 +70,6 @@ public class Ball extends JPanel implements Runnable
             g.setFont(new Font("Arial Black", Font.BOLD, 20));
             g.drawString("Press Space to Try Again",50,750);
         }
-        
 
         // print new position
         g.setColor(Color.BLUE);
@@ -101,14 +101,13 @@ public class Ball extends JPanel implements Runnable
     public void move_player()
     {
         //on obstacle
-        if (on_obstacle >= 0 && on_obstacle < list_obstacle.size())
+        if (on_obstacle != null)
         {
-            obstacle o = list_obstacle.get(on_obstacle);
-            if ( (o.posx + width) < x)
+            if ( (on_obstacle.posx + width) < x)
             {
                 on_ground = false;
-                ground += o.width;
-                on_obstacle = -1;
+                ground += on_obstacle.width;
+                on_obstacle = null;
             }
         }
 
@@ -121,10 +120,10 @@ public class Ball extends JPanel implements Runnable
             y += 2*speed;
 
         // touch ground
-        if (y == ground)
-            on_ground = true; 
+        if (y >= ground)
+            on_ground = true;
         // finish jump
-        else if (y < ground - 150)
+        else if (y < jump_ground - 180)
             on_jump = false;
 
     }
@@ -136,14 +135,14 @@ public class Ball extends JPanel implements Runnable
         {
             obstacle o = list_obstacle.get(i);
 
-            if ( Math.abs(y + width - o.posy) <= 2
-                    && (o.posx + o.width - x) < width
+            if ( Math.abs(y + width - o.posy) <= 1
+                    && o.posx + o.width - x <= width + o.width
                     && !on_ground && !on_jump)
             {
                 on_ground = true;
                 on_jump = false;
                 ground -= o.width;
-                on_obstacle = i;
+                on_obstacle = o;
             }
             else
             {
