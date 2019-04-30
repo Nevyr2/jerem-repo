@@ -48,8 +48,8 @@ public class MainFrame extends JFrame implements ActionListener
                         ball.x = 50;
                         ball.y = 648;
                         ball.list_obstacle.clear();
-                        ball.alive = true;
                         ball.ground = 650;
+                        ball.alive = true;
                         panel.updateUI();
                     }
 
