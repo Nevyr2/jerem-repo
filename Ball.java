@@ -39,9 +39,9 @@ public class Ball extends JPanel implements Runnable
     
         // print ground and line
         g.setColor(Color.BLACK);
-        g.drawLine(0,700,1500,700);
-        g.drawLine(0,50,1500,50);
-        g.drawLine(0,165,1500,165);
+        g.drawLine(0,700,2500,700);
+        g.drawLine(0,50,2500,50);
+        g.drawLine(0,165,2500,165);
         
         //print Score
         g.setColor(Color.BLUE);
@@ -129,18 +129,15 @@ public class Ball extends JPanel implements Runnable
 
     }
 
-    public void move_obstacle_AND_check_dead()
+    public void move_all_obstacles()
     {
         //check if ball jump one of the obstacle
         for (int i = 0; i < list_obstacle.size(); i++)
         {
             obstacle o = list_obstacle.get(i);
 
-            if ( (y + width) == (o.posy) 
-                            && (( x < o.posx 
-                            && (x + width) > (o.posx + o.width)) 
-                            || (o.posx < x 
-                            && (o.posx + o.width) > (x + width)))
+            if ( Math.abs(y + width - o.posy) <= 2
+                    && (o.posx + o.width - x) < width
                     && !on_ground && !on_jump)
             {
                 on_ground = true;
@@ -148,10 +145,11 @@ public class Ball extends JPanel implements Runnable
                 ground -= o.width;
                 on_obstacle = i;
             }
-            
-            //check if alive
-            o.touch_obstacle(this);
-                        
+            else
+            {
+                //check if alive
+                o.touch_obstacle(this);
+            }
             //move obstacle
             o.move(speed);
         }
@@ -181,8 +179,8 @@ public class Ball extends JPanel implements Runnable
                 if (i == j)
                     continue;
 
-                if (Math.abs(o1.posx - o2.posx) > 20 
-                        && Math.abs(o1.posx - o2.posx) < 60 
+                if (Math.abs(o1.posx - o2.posx) > 20
+                        && Math.abs(o1.posx - o2.posx) < 60
                         && o1.posy == o2.posy)
                     list_obstacle.remove(j);
             }
@@ -199,7 +197,7 @@ public class Ball extends JPanel implements Runnable
     }
     public void run() 
     {
-        System.out.println("D�but de la m�thode run");
+        System.out.println("Début de la méthode run");
         while (!quit) 
         {
             Toolkit.getDefaultToolkit().sync();
@@ -207,7 +205,7 @@ public class Ball extends JPanel implements Runnable
             {
                 move_player();
 
-                move_obstacle_AND_check_dead();
+                move_all_obstacles();
 
                 maj_obstacle();
 

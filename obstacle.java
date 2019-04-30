@@ -19,16 +19,13 @@ public class obstacle
 
     public void touch_obstacle(Ball ball)
     {
-        if ( ( (ball.x < posx && (ball.x + ball.width) > (posx + width))
-                    || (posx < ball.x && (posx + width) > (ball.x + ball.width)))
-                    && ball.y == (posy + width))
-            ball.alive = false;
-
-        if ( (ball.x + ball.width) == posx 
+        if ( (ball.x + ball.width) >= posx
+                && ball.x <= posx + width
                 && (ball.y + ball.width) > posy
                 &&  ball.y < (posy + width))
+        {
             ball.alive = false;
+        }
     }
-
 }
 
